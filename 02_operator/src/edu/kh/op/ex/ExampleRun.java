@@ -14,6 +14,9 @@ public class ExampleRun {
 		//opEx.testEx4();
 		opEx.testEx5();
 		
+		//OpExample2 opEx2 = new OpExample2();
+		//opEx2.ex1();
+		
 	}
 
 }
