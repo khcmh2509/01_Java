@@ -1,7 +1,5 @@
 package edu.kh.control.loop;
 
-import java.util.Iterator;
-
 // 실행용 클래스
 public class LoopRun {
 
@@ -15,7 +13,14 @@ public class LoopRun {
 		//forEx.ex5();
 		//forEx.ex6();
 		//forEx.ex7();
-		forEx.ex8();
+		//forEx.ex8();
+		
+		WhileExample whileEx = new WhileExample();
+		//whileEx.ex1();
+		//whileEx.ex2();
+		
+		
+		
 	}
 
 }
