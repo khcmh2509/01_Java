@@ -37,7 +37,8 @@ public class Hero {
 		
 		// 단, 현재 경험치가 300이상이면 
 		// 현재 레벨을 1 증가시키고, 레벨이 올랐다는 메세지 출력
-		if(this.exp >= 300) {
+		// 경험치 추가 300 마다 레벨이 오르도록 조건식 수정
+		if(this.exp >= 300 * level) {
 			level += 1; 
 			System.out.println("레벨이 올랐습니다!! 현재레벨 : " + level);
 		}
