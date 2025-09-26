@@ -8,7 +8,7 @@ package edu.kh.inheritance.model.dto;
  * 
  * */
 // final 클래스 : 상속불가(누군가의 부모가 될 수 없다)
-public final class Employee extends Person {
+public /*final*/ class Employee extends Person {
 	
 	// 필드
 	private String company; // 회사명
@@ -49,6 +49,11 @@ public final class Employee extends Person {
 		return super.toString() + " / " + company;
 	}
 	
+	// final 메서드 -> 오버라이딩 불가
+	// - 메서드의 기능이 변하면 안되는 경우
+	public final void onlyEmployee() {
+		System.out.println("final 메서드입니다");
+	}
 	
 	
 	
