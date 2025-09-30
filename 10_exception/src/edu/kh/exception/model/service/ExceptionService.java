@@ -1,5 +1,7 @@
 package edu.kh.exception.model.service;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -98,4 +100,97 @@ public class ExceptionService {
 
 	}
 
+	public void ex3() {
+		// try - catch - finally
+		// finally : try 구문에서 예외 발생 유무 관계 없이 무조건 마지막에 수행
+		
+		try {
+			System.out.print("정수 1 입력 : ");
+			int input1 = sc.nextInt(); 
+			
+			System.out.print("정수 2 입력 : ");
+			int input2 = sc.nextInt(); 
+			
+			System.out.println("결과 : " + input1 / input2);
+			
+		} catch (Exception e) {
+			
+			// 매개변수 e : 예외 관련된 정보 + 예외 관련 기능
+			System.out.println( e.getClass() ); // 어떤 예외 클래스인가?
+			// class java.lang.Ari..
+			
+			System.out.println( e.getMessage() ); // 예외 발생시 출력된 내용
+			//  / by zero
+			
+			System.out.println( e ); // e.toString() 
+			
+			e.printStackTrace(); // 상세히 예외 추적해주는 메서드
+			
+		} finally {
+			
+			System.out.println("무조건 수행됨");
+			sc.close(); // 스캐너 통로 닫기 : 메모리 누수 방지
+			
+		}
+		
+		
+		// try-with-resources : finally에서 일일이 close() 호출하지 않아도
+		// 자동으로 리소스를 닫아주는 방식
+		try (Scanner sc = new Scanner(System.in)) {
+			
+			System.out.print("이름 : ");
+			String name = sc.nextLine();
+			System.out.println("안녕~ " + name);
+			
+		} catch (Exception e) {
+			System.out.println("예외발생 : " + e.getMessage());
+		}
+		
+		
+	}
+	
+	public void ex4() {
+		
+		try {
+			methodA();
+		} catch (Exception e) {
+			System.out.println("methodC에서부터 발생한 예외를 "
+					+ "ex4에서 잡아 처리함");
+			e.printStackTrace();
+		}
+	}
+	
+	public void methodA() throws Exception{
+		methodB();
+	}
+	
+	public void methodB() throws IOException{
+		methodC();
+	}
+	
+	public void methodC() throws FileNotFoundException {
+		// throws : 호출한 메서드에게 예외를 던짐
+		// -> 호출한 메서드에게 예외처리를 하라고 위임하는 행위
+		
+		// throw : 예외 강제 발생 구문
+		throw new FileNotFoundException();
+	}
+	
+	
+	
+	public void ex5() throws UserException{
+		// 어떠한 상황이 발생함..
+		// -> 이 상황에 맞추어 특별한 예외를 발생시키고 싶은데
+		// 자바가 미리 만들어둔 예외 클래스 중 마땅한게 없을 때
+		// 사용자가 원하는 모양새의 예외 클래스를 만들어 쓸 수 있다
+		// -> 사용자 정의 예외 클래스
+		// UserException 사용하여 강제 예외 발생시키기
+		throw new UserException("내가 만든 예외 처리해라!!!!");
+	}
+	
+	
+	
+	
+	
+	
 }
