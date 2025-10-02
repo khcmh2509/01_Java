@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
+import java.util.TreeSet;
 
 import edu.kh.collection.pack2.model.dto.Person;
 
@@ -184,8 +186,43 @@ public class SetService {
 		// - A.equals(B) : A와 B가 가지고있는 필드값이 전부 같으면 true
 		System.out.println(p1.equals(p2));
 		System.out.println(p1.equals(p3));
+	
 		
+	}
+	
+	
+	/** 
+	 * TreeSet 이용한 로또번호 생성기
+	 * -> 기본 오름차순 정렬
+	 * 
+	 * * TreeSet안에 저장되는 객체는 Comparable 인터페이스 상속 필수!
+	 * -> 컬렉션에 저장될 수 있는 형태는 객체만!
+	 * -> int -> Integer 라는 Wrapper 클래스 이용하여 저장해야함.
+	 * 
+	 * -> Integer는 Comparable 인터페이스 이미 상속되어있음 
+	 * -> 바로 사용 가능! (자동 정렬됨)
+	 * 
+	 */
+	public void method4() {
 		
+		// Integer를 저장할 TreeSet 객체 생성
+		Set<Integer> lotto = new TreeSet<Integer>();
+		
+		// 난수 생성
+		// 1) Math.random() 
+		// 2) Random.nextInt(10) : 0~9 범위 내 정수 반환 
+		
+		// Random 객체 생성
+		Random random = new Random();
+		
+		// lotto에 저장된 값이 6개 미만이면 반복
+		// == 6개 멈춤
+		while(lotto.size() < 6) {
+			// 1~45 범위 난수 발생
+			lotto.add(random.nextInt(45) + 1);
+		}
+		
+		System.out.println( lotto );
 		
 	}
 	
