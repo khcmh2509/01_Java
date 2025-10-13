@@ -77,6 +77,7 @@ public class BookService {
 	}
 
 	/** 1. 도서 등록 메서드
+	 * @author 드라이버 : 김철수 / 네비게이터 : 김영희
 	 * 
 	 */
 	public String addBook() {
