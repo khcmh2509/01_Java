@@ -1,8 +1,13 @@
 package edu.kh.io.pack2.model.service;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class ByteService {
 
@@ -181,5 +186,241 @@ public class ByteService {
 		}
 
 	}
+	
+	/**
+	 * 바이트 기반 파일 입력
+	 * - 외부 파일의 내용을 자바프로그램 내부로 읽어오기
+	 */
+	public void fileByteInput() {
+		
+		// 파일 입력용 바이트 기반 스트림 선언
+		FileInputStream fis = null;
+		
+		try {
+			
+			fis = new FileInputStream("/io_test/20251014/노래가사.txt");
+			// FileInputStream 이용 시 해당 경로에 반드시
+			// 실제 파일이 존재해야함!
+			// -> FileNotFoundException 발생시킴
+			// : \io_test\20251014\노래가사.txt (지정된 파일을 찾을 수 없습니다)
+			
+			// 방법1. 파일 내부 내용을 1byte씩 끊어서 가져오기
+			// -> 2byte 범주의 글자들은 깨지는 문제 발생함
+			
+			// byte -> 자바에서 정수형
+			// 다루기 힘들기때문에 정수형 기본형인 int로 변환해서 사용
+			
+			/*
+			int value = 0; // 읽어온 바이트값을 저장할 변수
+			
+			StringBuilder sb = new StringBuilder();
+			
+			while(true) {
+				
+				value = fis.read(); // 1byte씩 읽어오기
+				// 단, 더이상 읽어올 값이 없으면 -1 반환
+				
+				if(value == -1) break; // 다 읽어왔으면 반복 멈춤
+				
+				sb.append( (char)value );
+				// char로 강제형변환해서 문자 형태로 sb에 추가
+			}
+			
+			System.out.println(sb.toString()); // 읽어온 내용 콘솔에 출력
+			*/
+			
+			// 방법 2. 파일에 저장된 모든 byte값을 다 읽어와
+			// byte[] 형태로 반환 받기
+			// -> byte[] 배열을 이용해서 String 객체 생성
+			byte[] bytes = fis.readAllBytes();
+			
+			String content = new String(bytes);
+			
+			System.out.println( content );
+			
+			// InputStream은 flush 없음
+			// flush() 는 출력 스트림에만 관련된 동작
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			
+		} finally {
+			
+			// 사용완료된 Stream 메모리 반환
+			try {
+				if(fis != null) fis.close();
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		
+			
+		}
+		
+		
+	}
+	
+	
+	/**
+	 * BufferedInputStream 보조 스트림을 이용한 성능 향상
+	 * 
+	 * InputStream의 경우 외부 파일의 데이터를 읽어올 때 사용
+	 * -> 읽어오는 파일 내부의 데이터 크기가 작으면 
+	 *   보조스트림의 성능 이점이 크게 눈에 띄지 않음.
+	 */
+	public void bufferedFileByteInput() {
+		
+		// 파일 입력용 바이트 기반 스트림 선언
+		FileInputStream fis = null;
+		
+		// 파일 입력용 바이트 보조 스트림 선언
+		BufferedInputStream bis = null;
+		
+		try {
+			
+			// 기반 스트림 생성
+			fis = new FileInputStream("/io_test/20251014/노래가사.txt");
+			
+			// 보조 스트림 생성
+			bis = new BufferedInputStream(fis);
+			
+			byte[] bytes = bis.readAllBytes();
+			
+			String content = new String(bytes);
+			
+			System.out.println( content );
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+			
+		} finally {
+			
+			try {
+				// 보조 스트림만 close()해도 기반 스트림도 같이 close() 됨
+				if(bis != null) bis.close();
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+			
+		}
+		
+		
+		
+	}
+	
+	/** 파일 복사
+	 *
+	 * 파일 경로를 입력받아
+	 * 지정된 파일과 같은 경로에 복사된 파일 출력하기
+	 *
+	 * [실행화면]
+	 * 파일 경로 입력 : /io_test/20251014/노래가사.txt
+	 * 복사 완료 : /io_test/20251014/노래가사_copy.txt
+	 *
+	 * 1) 입력된 경로에 파일이 있는지 검사
+	 * 2) 있으면 파일 내용을 모두 읽어오기 : FileInputStream + BufferedInputStream
+	 * 3) 읽어온 내용을 같은 경로 위치에 "파일명_copy.확장자" 이름으로 출력
+	 *    : FileOutputStream + BufferedOutputStream
+	 *   
+	 * + Scanner 대신 BufferedReader(문자열 입력용 스트림) 이용
+	 * -> BufferedReader는 보조스트림으로 단독사용 불가능!
+	 * -> BufferedReader 생성 시 보조스트림인 InputStreamReader -> InputStream가 기반
+	 *
+	 */
+	public void fileCopy() {
+		
+		// 스트림 참조변수들 선언
+		
+		BufferedReader br = null; // 문자열 입력용 스트림(Scanner 대신 사용)
+		
+		FileInputStream fis = null; 	// 파일 입력 기반 스트림
+		BufferedInputStream bis = null; // 파일 입력 보조 스트림
+		
+		FileOutputStream fos = null; 	 // 파일 출력 기반 스트림
+		BufferedOutputStream bos = null; // 파일 출력 보조 스트림
+		
+		try {
+			// 키보드 입력을 받기 위한 스트림 객체 생성
+			br = new BufferedReader(new InputStreamReader(System.in));
+			
+			// 경로 입력 받기
+			System.out.print("파일 경로 입력 : ");
+			String target = br.readLine(); // 입력된 한 줄 읽어오기
+			// /io_test/20251014/노래가사.txt
+			
+			// 해당 경로에 파일이 존재하는지 확인
+			File file = new File(target);
+			
+			if( !file.exists() ) { // 해당 경로에 파일이 존재하지 않으면
+				// 프린트 구문 출력
+				System.out.println("[해당 경로에 파일이 존재하지 않습니다]");
+				return; // 파일이 존재하지 않으면 해당 메서드 바로 종료
+			}
+			
+			// 해당 경로에 파일이 존재하면 
+			// target이 가리키는 파일을 입력받을 수 있도록
+			// 입력용 스트림 생성
+			fis = new FileInputStream(target);
+			bis = new BufferedInputStream(fis);
+			
+			// 입력용 스트림을 이용해서 target 파일의 내용 입력받기
+			byte[] bytes = bis.readAllBytes();
+			
+			// -------------------------------------------------------------
+			
+			// 출력할 파일의 경로 + _copy 가 붙은 파일 이름
+			// target : /io_test/20251014/노래가사.txt
+			// copy	  : /io_test/20251014/노래가사_copy.txt
+			
+			StringBuilder sb = new StringBuilder();
+			sb.append(target); // "/io_test/20251014/노래가사.txt"
+			
+			// int String.lastIndexOf("문자열")
+			// - 전달인자 문자열이 마지막으로 등장하는 인덱스를 찾아
+			// int 값으로 반환. 찾지 못하면 -1 반환
+			int insertPoint = target.lastIndexOf(".");
+			
+			sb.insert(insertPoint, "_copy"); // 22번 인덱스 자리에 _copy
+			// "/io_test/20251014/노래가사_copy.txt"
+			
+			// 출력용 스트림 생성
+			fos = new FileOutputStream(sb.toString());
+			bos = new BufferedOutputStream(fos);
+			
+			// 원본에서 읽어온 내용 bytes를 bos를 이용해서 출력(쓰기)
+			bos.write(bytes);
+			bos.flush(); // 스트림에 있는 데이터 모두 밀어내기!
+			
+			System.out.println("복사완료 : " + sb.toString());
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			
+		} finally {
+			
+			try {
+				// 사용한 스트림 메모리 모두 반환
+				if(br != null) br.close();
+				if(bis != null) bis.close(); // fis도 닫힘
+				if(bos != null) bos.close(); // fos도 닫힘
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+			
+		}
+		
+		
+	}
+	
+	
+	
+	
+	
+	
+	
 
 }
