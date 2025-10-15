@@ -42,7 +42,7 @@ public class ByteRun {
 		// service.bufferedFileByteOutput();
 		//service.fileByteInput();
 		//service.bufferedFileByteInput();
-		service.fileCopy();
+		//service.fileCopy();
 	}
 
 }
