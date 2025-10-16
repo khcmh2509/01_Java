@@ -113,8 +113,20 @@ public class ServerService {
 			pw.println(str); // 서버 -> 클라이언트로 데이터를 출력(전송)
 			pw.flush(); // flush() : 스트림 내용을 밀어냄
 			
+			// ---------------------------------------------
 			
-
+			// 클라이언트 -> 서버 메시지 전달 받기(읽기 : 입력)
+			String clientMessage = br.readLine();
+			
+			// 서버의 콘솔창에 클라이언트가 보낸 메시지와 IP 출력
+			String clientIP = clientSocket.getInetAddress().getHostAddress();
+			// getInetAddress() 
+			// : 클라이언트에 대한 IP 주소 정보를 포함한 InetAddress 객체 반환
+			// getHostAddress() 
+			// : InetAddress 객체에서 IP 주소를 문자열 형식으로 반환
+			
+			System.out.println(clientIP + "가 보낸 메시지 : " + clientMessage);
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			
